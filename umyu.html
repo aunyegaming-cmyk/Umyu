@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Gacha Umyu - Stream</title>
+<style>
+  body {
+    font-family: "Comic Sans MS", sans-serif;
+    background: rgba(0,0,0,0.5); /* fond semi-transparent overlay */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    text-align: center;
+    margin: 0;
+  }
+
+  h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #ffd700;
+    text-shadow: 2px 2px 5px black;
+  }
+
+  button {
+    padding: 15px 35px;
+    font-size: 28px;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    background: #76c7e4;
+    color: #fff;
+    font-weight: bold;
+    transition: 0.2s;
+    text-shadow: 1px 1px 2px black;
+  }
+
+  button:hover {
+    background: #4da0c3;
+  }
+
+  #result {
+    margin-top: 30px;
+    font-size: 24px;
+    padding: 20px;
+    border-radius: 15px;
+    background: rgba(0,0,0,0.6);
+    max-width: 900px;
+    word-wrap: break-word;
+  }
+</style>
+</head>
+<body>
+
+<h1>🎲 Umyu Mystère 🎲</h1>
+<button onclick="generate()">Générer un Umyu</button>
+<div id="result">Umyu mystère...</div>
+
+<script>
+// --- LISTES COMPLÈTES ---
+const couleurs = ["vanille","myrtille","cacao","menthe","fraise","nuage","mousse","lune","pierre","brume",
+"givre","rose thé","lilas","sable chaud","carmin","abricot","caramel","châtaigne","pistache","ivoire",
+"corail doux","bleu orage","bleu glacier","vert sapin","vert jade","vert mousse","argenté","doré","cuivre oxydé",
+"bleu ciel","bleu nuit","bleu océan","lavande","framboise","pêche pastel","noisette","coquillage","lichen",
+"ambre clair","ardoise","citrine","topaze","vert néon","cyan givré","améthyste","perle rosée","ocre","tourbe",
+"gris brumeux","blanc neige","blanc crème","noir encre"];
+
+const types = ["umyu des forêts","umyu marin","umyu renard","umyu lunaire","umyu des rivières","umyu des ruines",
+"umyu des sources chaudes","umyu mousseux","umyu des tempêtes","umyu brise-d’aube","umyu des racines",
+"umyu des étoiles","umyu des marais","umyu des montagnes","umyu des fleurs","umyu des vents","umyu des éclats",
+"umyu des chants","umyu des ronces","umyu cendré","umyu des vagues","umyu des glaces","umyu des lucioles",
+"umyu sporeux","umyu des grottes","umyu des aurores","umyu brumeux","umyu phosphorescent","umyu des silences",
+"umyu éclaireur","umyu veilleur","umyu du crépuscule","umyu antique","umyu des esprits","umyu renard blanc"];
+
+const traits = ["timide","grognon","hyper curieux","joueur","peureux","protecteur","romantique","ronchon mais gentil",
+"glouton","câlin","jaloux","rêveur","blagueur","collectionneur de cailloux sacrés","solitaire","dramatique",
+"maladroit","malin","sage","studieux","impatient","silencieux","moqueur","fainéant","hyperactif","peureux du noir",
+"loyal","naïf","capricieux","perfectionniste","ambitieux","mystérieux","superstitieux","bougon mais adorable",
+"jaloux des autres umyu","parle trop","parle jamais","s’attache vite","méfiant mais tendre","nostalgique",
+"garde tout","ne garde rien","facilement jaloux","hypersensible"];
+
+const adore = ["champignons rôtis","algues salées","thé au miel","nouilles","brioches vapeur","chocolat chaud",
+"sardines grillées","beurre salé","croissants","marshmallows brûlés","ramen","pâtisseries","pancakes",
+"lait sucré","riz collant","biscuits aux noisettes","fraises sauvages","pommes caramélisées","baies de sureau",
+"graines grillées","saumon fumé","mandarines","châtaignes grillées","pain d’épices","gaufres","crêpes",
+"fromage fondu","nougats","bonbons à la menthe","tartes aux fruits"];
+
+const deteste = ["vent trop fort","froid humide","humains bruyants","miroirs","moustiques","orages","longs silences gênants",
+"qu’on prenne ses cailloux","champignons crus","réveils matinaux","chaussures mouillées","neige sale","feux d’artifice",
+"foules","épines","qu’on touche ses oreilles","se sentir ignoré","la solitude forcée","se lever tôt",
+"les questions personnelles","les secrets mal gardés"];
+
+const actions = ["fait des câlins","empile des cailloux","mordille les feuilles","dort roulé","vole les serviettes douces",
+"collectionne les coquillages","ronronne quand on gratte la tête","observe la lune avant de dormir","s’endort n’importe où",
+"ronge les cordons","cache des trésors sous les racines","hurle au clair de lune","tire la langue quand il réfléchit",
+"fait fondre les cœurs sans le vouloir","garde des lettres jamais envoyées","range les feuilles par taille",
+"vole les stylos","lèche les vitres","se perd facilement","brille quand il est heureux"];
+
+const objets = ["clochette","plume de renard blanc","galet cœur","petite clé","ruban violet","mèche de cheveux",
+"graine brillante","dent de lait","coquillage percé","caillou doré","gemme crépusculaire","pierre plate polie",
+"morceau de bois flotté","amulette ancienne","feuille séchée","pétale éternel","coquillage chantant","fiole d’eau de lune",
+"bille verte","dent trouvée"];
+
+const themes = ["chocolat","forêt ancienne","nuit étoilée","mousse & fleurs","aurore boréale","bibliothèque poussiéreuse",
+"pâtisserie","océan","renard blanc","lune & brume","tempête d’été","désert ocre","marais aux lucioles","lac gelé",
+"cascade argentée","marché nocturne","ruines enfouies","feu de camp","atelier d’herboriste","jardin secret",
+"plage d’hiver","festival des lanternes","neige silencieuse","grottes cristallines","lierre & pierre",
+"clair de lune","mousse & champignons","pluie d’été","vent salé","source sacrée","sanctuaire oublié","baie sucrée",
+"résine dorée","nuage rose","brume marine","matin givré","automne rouge","printemps doux","été orageux",
+"hiver bleu","plumage de corbeau","lumière violette","champ de lavande","dunes brunes","montagnes bleues",
+"vent du nord","verger d’abricots","roses fanées","lac aux miroirs","puits aux souhaits","clairière enchantée",
+"pins enneigés","pont de bois","pierre runique","parfum de cannelle","herbes sauvages","pluie violette",
+"sable nocturne","thé fumant","cerisiers en fleurs","feuilles mortes","ombre portée","rêves sucrés",
+"vœux suspendus","nuages or","brise de minuit","brouillard doré"];
+
+// --- RANDOM PICK ---
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+// --- GENERATE ---
+function generate() {
+  const result = `Ton Umyu est un ${pickRandom(types)} couleur ${pickRandom(couleurs)} au thème ${pickRandom(themes)}, très ${pickRandom(traits)}. Il adore ${pickRandom(adore)} mais déteste ${pickRandom(deteste)}. Il a l’habitude de ${pickRandom(actions)} et garde toujours ${pickRandom(objets)} sur lui.`;
+  
+  // Affiche dans OBS
+  document.getElementById("result").innerText = result;
+
+  // TTS voix homme
+  const utter = new SpeechSynthesisUtterance(result);
+  utter.lang = 'fr-FR';
+  const voices = speechSynthesis.getVoices();
+  for (let i = 0; i < voices.length; i++) {
+      if (voices[i].lang.includes('fr') && voices[i].name.toLowerCase().includes('male')) {
+          utter.voice = voices[i];
+          break;
+      }
+  }
+  if(!utter.voice) utter.voice = voices[0]; // fallback
+  speechSynthesis.speak(utter);
+}
+</script>
+
+</body>
+</html>
